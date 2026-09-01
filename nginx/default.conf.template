@@ -1,0 +1,79 @@
+# Поддомены нужны потому, что приложения уже используют корень /.
+# Пример: ais.college.local, distantes.college.local, schedule.college.local.
+
+server {
+    listen 80 default_server;
+    server_name _;
+    return 404;
+}
+
+server {
+    listen 80;
+    server_name ais.${DOMAIN};
+
+    client_max_body_size 25m;
+
+    location /static/ {
+        alias /var/www/ais-static/;
+        access_log off;
+        expires 7d;
+    }
+
+    location /media/ {
+        alias /var/www/ais-media/;
+    }
+
+    location / {
+        proxy_pass http://ais:8000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 120s;
+    }
+}
+
+server {
+    listen 80;
+    server_name distantes.${DOMAIN};
+
+    location / {
+        proxy_pass http://distantes:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}
+
+server {
+    listen 80;
+    server_name schedule.${DOMAIN};
+
+    client_max_body_size 25m;
+
+    # API вынесен на внешний nginx, поэтому внутренний nginx Shedule
+    # остаётся только сервером статики.
+    location /api/ {
+        proxy_pass http://schedule-backend:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 120s;
+    }
+
+    location / {
+        proxy_pass http://schedule-frontend:80;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
