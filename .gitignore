@@ -1,0 +1,20 @@
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+
+# Local database and backup data
+backups/
+*.sql
+*.sql.gz
+*.tar.gz
+
+# Generated or temporary files
+college-compose.rendered.yml
+*.log
+
+# Editor and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

@@ -1,5 +1,9 @@
 # Общий стек колледжа
 
+Полная русская инструкция для чистой установки Ubuntu Server находится в [UBUNTU_SERVER_SETUP.md](./UBUNTU_SERVER_SETUP.md).
+
+Инструкция по подключению домена Reg.ru и настройке поддоменов находится в [DOMAIN_SETUP_REG_RU.md](./DOMAIN_SETUP_REG_RU.md).
+
 В этом каталоге находится единый Docker Compose для трёх приложений:
 
 - `ais` — Django + Gunicorn + SQLite;
