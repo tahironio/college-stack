@@ -9,12 +9,13 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
-      # HTTPS можно добавить после настройки сертификатов:
-      # - "443:443"
+      - "443:443"
     environment:
       DOMAIN: ${DOMAIN:-college.local}
     volumes:
       - ./nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - ./certs:/etc/nginx/certs:ro
+      - ./certbot/www:/var/www/certbot:ro
       - ais_static:/var/www/ais-static:ro
       - ais_media:/var/www/ais-media:ro
     depends_on:
