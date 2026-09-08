@@ -66,6 +66,39 @@ services:
       - "3000"
     networks: [college]
 
+  # -------------------- Homovoi API --------------------
+  homovoi-api:
+    build:
+      context: ${HOMOVOI_PATH:-../Homing/homovoi-server}
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: postgresql://homovoi:${HOMOVOI_DB_PASSWORD:?Заполните HOMOVOI_DB_PASSWORD в .env}@homovoi-db:5432/homovoi
+      JWT_SECRET: ${HOMOVOI_JWT_SECRET:?Заполните HOMOVOI_JWT_SECRET в .env}
+    depends_on:
+      homovoi-db:
+        condition: service_healthy
+    expose:
+      - "3001"
+    networks: [college]
+
+  homovoi-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: homovoi
+      POSTGRES_USER: homovoi
+      POSTGRES_PASSWORD: ${HOMOVOI_DB_PASSWORD:?Заполните HOMOVOI_DB_PASSWORD в .env}
+    volumes:
+      - homovoi_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U homovoi -d homovoi"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks: [college]
+
   # -------------------- Shedule --------------------
   schedule-postgres:
     image: postgres:16-alpine
@@ -146,6 +179,7 @@ volumes:
   ais_static:
   distantes_db:
   schedule_pgdata:
+  homovoi_pgdata:
 
 networks:
   college:
