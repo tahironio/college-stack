@@ -60,6 +60,7 @@ services:
       SESSION_SECRET: ${DISTANTES_SESSION_SECRET:?Заполните DISTANTES_SESSION_SECRET в .env}
       DATABASE_PATH: /app/data/lampa.sqlite
       JITSI_URL: ${JITSI_URL:-https://meet.jit.si}
+      YANDEX_OAUTH_TOKEN: ${YANDEX_OAUTH_TOKEN:-}
     volumes:
       - distantes_db:/app/data
     expose:
