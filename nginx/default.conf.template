@@ -70,37 +70,6 @@ server {
     }
 }
 
-# Jitsi Meet - HTTP redirect
-server {
-    listen 80;
-    server_name video.${DOMAIN};
-    return 301 https://$host$request_uri;
-}
-
-# Jitsi Meet
-server {
-    listen 443 ssl;
-    server_name video.${DOMAIN};
-
-    ssl_certificate /etc/nginx/certs/video-fullchain.pem;
-    ssl_certificate_key /etc/nginx/certs/video-privkey.pem;
-    ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_ciphers HIGH:!aNULL:!MD5;
-    ssl_prefer_server_ciphers on;
-
-    location / {
-        proxy_pass http://host.docker.internal:3080;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-        proxy_read_timeout 120s;
-    }
-}
-
 # Homovoi API - HTTP redirect
 server {
     listen 80;
